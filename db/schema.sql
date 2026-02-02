@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS users     CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS jobs      CASCADE;
 
+
 CREATE TABLE customers (
     id                serial PRIMARY KEY,
     name              VARCHAR(255) NOT NULL,
@@ -12,6 +13,16 @@ CREATE TABLE customers (
     zip_code          VARCHAR(10) NOT NULL,
     phone             VARCHAR(20) NOT NULL,
     created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+    id              serial PRIMARY KEY,
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    password_hash   VARCHAR(255) NOT NULL,
+    role            VARCHAR(100) NOT NULL, -- 'admin' or 'employee'
+    name            VARCHAR(255) NOT NULL,
+    phone           VARCHAR(20),
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE jobs (
@@ -27,14 +38,4 @@ CREATE TABLE jobs (
 
     FOREIGN KEY (employee_id) REFERENCES users(id),
     FOREIGN KEY (customer_id) REFERENCES customers(id)
-);
-
-CREATE TABLE users (
-    id              serial PRIMARY KEY,
-    email           VARCHAR(255) UNIQUE NOT NULL,
-    password_hash   VARCHAR(255) NOT NULL,
-    role            VARCHAR(100) NOT NULL, -- 'admin' or 'employee'
-    name            VARCHAR(255) NOT NULL,
-    phone           VARCHAR(20),
-    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
