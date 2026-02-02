@@ -1,4 +1,6 @@
-import "dotenv/config"; // Automatically loads .env variables
+import dotenv from "dotenv";
+dotenv.config(); // Automatically loads .env variables
+
 import app from "./app.js";
 import client from "./db/client.js";
 
@@ -12,7 +14,7 @@ const startServer = async () => {
 
     // 2. Starts the express server
     app.listen(PORT, () => {
-      console.log(`Server is running at https://localhost:${PORT}`);
+      console.log(`Server is running at http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start the server:", error);
