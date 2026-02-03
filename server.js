@@ -1,15 +1,14 @@
-import dotenv from "dotenv";
-dotenv.config(); // Automatically loads .env variables
+import "dotenv/config"; // Automatically loads .env variables
 
 import app from "./app.js";
-import client from "./db/client.js";
+import pool from "./db/pool.js";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
     // 1. Connects to the Postgres database
-    await client.connect();
+    await pool.connect();
     console.log("Connected to doxa_cleaning_llc database!");
 
     // 2. Starts the express server
