@@ -1,11 +1,15 @@
 import express from "express";
 import cors from "cors";
+import authRouter from "./API/auth.js";
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Auth Route
+app.use("/api/auth", authRouter);
 
 // Home Route
 app.get("/", (req, res) => {
@@ -19,7 +23,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Simple health check route
+// Health check route
 app.get("/api/health", (req, res) => {
   res.send({
     message: "Doxa API is alive and well!",
