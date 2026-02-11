@@ -3,7 +3,7 @@ import pool from "../db/pool.js";
 
 const router = express.Router();
 
-router.POST("/", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     // Get data from request
     const {
