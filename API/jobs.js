@@ -197,4 +197,57 @@ router.patch("/:id", async (req, res) => {
     res.status(500).json({ error: "Server error updating job" });
   }
 });
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      "DELETE FROM jobs WHERE id = $1 RETURNING *",
+      [id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Job not found",
+      });
+    }
+
+    res.json({
+      message: "Job deleted successfully",
+      deletedJob: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Delete job error:", err);
+    res.status(500).json({ error: "Server error deleting job" });
+  }
+});
+
+router.patch("/:id/complete", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `UPDATE jobs
+      SET status = 'completed', completed_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *`,
+      [id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Job not found",
+      });
+    }
+
+    res.json({
+      message: "Job marked as completed",
+      job: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Complete job error:", err);
+    res.status(500).json({ error: "Server error completing job" });
+  }
+});
 export default router;
