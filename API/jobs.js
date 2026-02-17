@@ -91,7 +91,7 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// Get jobs for specific employee
+// Find jobs for the User requesting their jobs
 router.get(
   "/my-jobs",
   authenticateToken,
@@ -100,7 +100,7 @@ router.get(
     try {
       const { employee_id } = req.query;
 
-      // If employee id is not entered return 422 error code and message.
+      // If employee id is not there return 422 error code and message.
       if (!employee_id) {
         return res.status(422).json({ error: "Missing employee_id" });
       }
@@ -124,8 +124,8 @@ router.get(
         [employee_id],
       );
 
-      // Once completed successfully return job details and customer info for a specific employee,
-      // and success message.
+      // Once completed, successfully return job details and customer info for a specific employee.
+      // With success message.
       res.json({
         message: "Employee jobs retrieved successfully",
         jobs: result.rows,
@@ -139,9 +139,10 @@ router.get(
   },
 );
 
+// Admin can update any part of the job info
 router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
-    // Will show the requested parameters to submit data  under.
+    // Will show the requested fields to submit data for.
     const { id } = req.params;
     const {
       employee_id,
@@ -157,7 +158,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
     const values = [];
     let paramCount = 1;
 
-    // If any of the requested parameters are NOT blank, push entered data into update and value arrays. The check next
+    // If any of the requested parameters are NOT blank, update data in jobs table
     if (employee_id !== undefined) {
       updates.push(`employee_id = $${paramCount}`);
       values.push(employee_id);
@@ -195,7 +196,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
       return res.status(422).json({ error: "No fields to update" });
     }
 
-    // Add job ID as last parameter
+    // Add job ID last
     values.push(id);
 
     // Update job in database and return updated job data.
@@ -220,7 +221,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
       job: result.rows[0],
     });
 
-    // If there is a server error, log error and return 500 error code.
+    // If there is a server error, log the error and return 500 error code.
   } catch (err) {
     console.error("Update job error:", err);
     res.status(500).json({ error: "Server error updating job" });
@@ -231,7 +232,7 @@ router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Delete selected job from database and return deleted job data.
+    // Delete the selected job from database and return deleted job data.
     const result = await pool.query(
       "DELETE FROM jobs WHERE id = $1 RETURNING *",
       [id],
@@ -257,6 +258,7 @@ router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// Updates job status to "complete"
 router.patch("/:id/complete", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -270,14 +272,14 @@ router.patch("/:id/complete", authenticateToken, async (req, res) => {
       [id],
     );
 
-    // If job is not in database return 404 error code.
+    // If job is not in database return 404 error code
     if (result.rows.length === 0) {
       return res.status(404).json({
         error: "Job not found",
       });
     }
 
-    // Return the updated job showing it is completed.
+    // Shows the status of the job as "completed"
     res.json({
       message: "Job marked as completed",
       job: result.rows[0],

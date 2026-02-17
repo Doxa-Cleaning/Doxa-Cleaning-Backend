@@ -1,6 +1,6 @@
 import "dotenv/config";
 import pg from "pg";
-const { Pool } = pg; // Pool is used when there are multiple users at any given time.
+const { Pool } = pg;
 
 const isProduction = process.env.NODE_ENV === "production";
 

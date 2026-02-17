@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRouter from "./API/auth.js";
 import jobsRouter from "./API/jobs.js";
+import customersRouter from "./API/customers.js";
 
 const app = express();
 
@@ -9,11 +10,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Api Routes with endpoints
 app.use("/api/auth", authRouter);
 app.use("/api/jobs", jobsRouter);
+app.use("/api/customers.js", customersRouter);
 
-// Home Route
+// Home page route
 app.get("/", (req, res) => {
   res.send({
     message: "Welcome to Doxa Cleaning llc API!",
@@ -25,7 +27,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health check route
+// Route to make sure api is ACTUALLY working
 app.get("/api/health", (req, res) => {
   res.send({
     message: "Doxa API is alive and well!",
