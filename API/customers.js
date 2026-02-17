@@ -83,6 +83,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
     const values = [];
     let paramCount = 1;
 
+    // Checks each field - if it exists it will add it to the arrays
     if (name !== undefined) {
       updates.push(`name = $${paramCount}`);
       values.push(name);
@@ -125,6 +126,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
 
     values.push(id);
 
+    // This updates the customer with the inputted fields from the user
     const result = await pool.query(
       `UPDATE customers SET ${updates.join(",")} WHERE id = $${paramCount} RETURNING *`,
       values,
