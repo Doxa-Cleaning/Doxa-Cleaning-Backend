@@ -6,18 +6,15 @@ const router = express.Router();
 
 router.post("/", authenticateToken, requireAdmin, async (req, res) => {
   try {
-    // Users entered data is sent back
     const { name, street_add1, street_add2, state, city, zip_code, phone } =
       req.body;
 
-    // Check if there are any missing fields
+    // Check for missing fields
     if (!name || !street_add1 || !state || !city || !zip_code || !phone) {
       return res.status(400).json({
         error: "Missing required fields",
       });
     }
-
-    // Add a new customer into table
     const result = await pool.query(
       `INSERT INTO customers (name, street_add1, street_add2, state, city, zip_code, phone)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -25,7 +22,6 @@ router.post("/", authenticateToken, requireAdmin, async (req, res) => {
       [name, street_add1, street_add2, state, city, zip_code, phone],
     );
 
-    // Sends success message and new customers data
     res.status(201).json({
       message: "Customer created successfully",
       customer: result.rows[0],
@@ -36,7 +32,7 @@ router.post("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// Shows a list of all customers in database
+// Return all customers in database
 router.get("/", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
@@ -53,7 +49,7 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// Shows customer info for one single customer
+// Return customer info for selected customer
 router.get("/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,7 +79,7 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
     const values = [];
     let paramCount = 1;
 
-    // Checks if each field is empty
+    // Check for empty fields
     if (name !== undefined) {
       updates.push(`name = $${paramCount}`);
       values.push(name);

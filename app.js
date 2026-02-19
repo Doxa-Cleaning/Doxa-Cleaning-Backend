@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Route to make sure api is ACTUALLY working
+// Route checks API is functioning
 app.get("/api/health", (req, res) => {
   res.send({
     message: "Doxa API is alive and well!",

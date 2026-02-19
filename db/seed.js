@@ -18,10 +18,8 @@ const seedDatabase = async () => {
 
     console.log("✅ Cleared existing data!");
 
-    // Create two sample users(1 admin, 2 employees)
     const hashedPassword = await bcrypt.hash("admin123", 10);
 
-    // Insert sample data to the users table.
     const usersResult = await pool.query(
       `INSERT INTO users (email, password_hash, role, name, phone) VALUES
             ('admin@doxacleaning.com', $1, 'admin', 'Business Owner', '555-0100'),
@@ -37,7 +35,6 @@ const seedDatabase = async () => {
 
     console.log("✅ Seeded Users:", usersResult.rows);
 
-    // Fill customers table with sample data.
     const customersResult = await pool.query(
       `INSERT INTO customers (name, street_add1, city, state, zip_code, phone) VALUES
             ('Jane Smith', '123 Main St', 'Phoenix', 'AZ', '85001', '555-1234'),
@@ -54,7 +51,6 @@ const seedDatabase = async () => {
 
     console.log("✅ Seeded Customers:", customersResult.rows);
 
-    // Give jobs table sample jobs.
     const jobsResult = await pool.query(
       `INSERT INTO jobs (employee_id, customer_id, status, scheduled_date, scheduled_time, estimated_duration) VALUES
             ($1, $2, 'pending', '2026-02-20', '09:00:00', 90),

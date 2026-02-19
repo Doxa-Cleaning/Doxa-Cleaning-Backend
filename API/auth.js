@@ -5,20 +5,19 @@ import pool from "../db/pool.js";
 
 const router = express.Router();
 
-// Creates a new user and enters them into DB table
+// Create a new user
 router.post("/register", async (req, res) => {
   try {
-    // Users inputted data is sent back
     const { email, password, role, name, phone } = req.body;
 
-    // Check to make sure all required fields are submitted
+    // Check for missing fields
     if (!email || !password || !role || !name || !phone) {
       return res.status(400).json({
         error: "Missing required fields: email, password, role, name, phone",
       });
     }
 
-    // Check if entered email already exists
+    // Check for pre-existing email
     const existingUser = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email],
@@ -30,11 +29,10 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Use bcrypt to hash the password 10 times for extra security
+    // Hash password
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
 
-    // Insert new created user into table
     const result = await pool.query(
       `INSERT INTO users (email, password_hash, role, name, phone)
             VALUES ($1, $2, $3, $4, $5)
@@ -42,7 +40,6 @@ router.post("/register", async (req, res) => {
       [email, password_hash, role, name, phone],
     );
 
-    // Shows the created users data (WITHOUT THE HASHED PASSWORD)
     res.status(201).json({
       message: "User created successfully",
       user: result.rows[0],
@@ -55,25 +52,23 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Create a logged in session for the user trying to login
+// Create session for user
 router.post("/login", async (req, res) => {
   try {
-    // Sends email and password that user inputted
     const { email, password } = req.body;
 
-    // Check to make sure the required fields are actually there
+    // Check for missing fields
     if (!email || !password) {
       return res.status(400).json({
         error: "Email and password are required",
       });
     }
 
-    // Use the entered email to search for that user
+    // Check user existence with email
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
 
-    // Check if that user exists and if not send error code.
     if (result.rows.length === 0) {
       return res.status(401).json({
         error: "Invalid email or password",
@@ -82,7 +77,7 @@ router.post("/login", async (req, res) => {
 
     const user = result.rows[0];
 
-    // Check if the entered password matched the hashed password
+    // Check entered password against hashed password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
 
     if (!isValidPassword) {
@@ -91,7 +86,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Creates a JWT token for the user if their account is found
+    // Create JWT token if current user exists
     const token = jwt.sign(
       {
         userId: user.id,
@@ -102,7 +97,6 @@ router.post("/login", async (req, res) => {
       { expiresIn: "24h" },
     );
 
-    // Sends a success message and shows the users info except hashed_password
     res.json({
       message: "Login successful",
       token: token,
