@@ -1,54 +1,18 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import "./App.css";
-import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
+import express from "express";
+import cors from "cors";
+import authRouter from "./API/auth.js";
+import jobsRouter from "./API/jobs.js";
+import customersRouter from "./API/customers.js";
+import employeesRouter from "./API/employees.js";
 
-function App() {
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const app = express();
 
-  const handleLoginSuccess = (userData, tokenData) => {
-    setUser(userData);
-    setToken(tokenData);
-    setIsLoggedIn(true);
-    localStorage.setItem("token", tokenData);
-  };
+app.use(cors());
+app.use(express.json());
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    setToken("");
-    localStorage.removeItem("token");
-  };
+app.use("/api/auth", authRouter);
+app.use("/api/jobs", jobsRouter);
+app.use("/api/customers", customersRouter);
+app.use("/api/employees", employeesRouter);
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/dashboard" />
-            ) : (
-              <LoginPage onLoginSuccess={handleLoginSuccess} />
-            )
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            isLoggedIn ? (
-              <Dashboard user={user} token={token} onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-export default App;
+export default app;
