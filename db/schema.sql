@@ -31,7 +31,7 @@ CREATE TABLE jobs (
     customer_id integer NOT NULL,
     status      VARCHAR(50) NOT NULL,
     scheduled_date DATE NOT NULL,
-    scheduled_time TIME NOT NULL,
+    scheduled_time SELECT CONVERT(VARCHAR[(15)], CAST('00:00' AS TIME), 100) NOT NULL,
     estimated_duration INTEGER DEFAULT 60, -- in minutes
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP,

@@ -17,4 +17,14 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    await pool.query("DELETE FROM users WHERE id = $1 AND role = 'employee'", [
+      req.params.id,
+    ]);
+    res.json({ message: "Employee deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
 export default router;
