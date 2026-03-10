@@ -35,6 +35,7 @@ CREATE TABLE jobs (
     scheduled_time TIME NOT NULL,
     estimated_duration INTEGER DEFAULT 60, -- in minutes
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    started_at TIMESTAMP,
     completed_at TIMESTAMP,
 
     FOREIGN KEY (employee_id) REFERENCES users(id),
