@@ -242,12 +242,40 @@ router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// Updates job status to "In-progress"
+router.patch("/:id/in-progress", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `UPDATE jobs
+      SET status = 'In-progress', started_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *`,
+      [id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Job not found",
+      });
+    }
+
+    res.json({
+      message: "Job Started",
+      job: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Start job error:", err);
+    res.status(500).json({ error: "Server error starting job" });
+  }
+});
+
 // Updates job status to "complete"
 router.patch("/:id/complete", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Update job status to completed and set completed_at timestamp
     const result = await pool.query(
       `UPDATE jobs
       SET status = 'completed', completed_at = CURRENT_TIMESTAMP
@@ -256,20 +284,16 @@ router.patch("/:id/complete", authenticateToken, async (req, res) => {
       [id],
     );
 
-    // If job is not in database return 404 error code
     if (result.rows.length === 0) {
       return res.status(404).json({
         error: "Job not found",
       });
     }
 
-    // Shows the status of the job as "completed"
     res.json({
       message: "Job marked as completed",
       job: result.rows[0],
     });
-
-    // If there was a server error during update, log error and return 500 error code
   } catch (err) {
     console.error("Complete job error:", err);
     res.status(500).json({ error: "Server error completing job" });
