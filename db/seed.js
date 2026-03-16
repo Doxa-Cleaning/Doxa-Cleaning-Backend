@@ -52,13 +52,13 @@ const seedDatabase = async () => {
     console.log("✅ Seeded Customers:", customersResult.rows);
 
     const jobsResult = await pool.query(
-      `INSERT INTO jobs (employee_id, customer_id, status, scheduled_date, scheduled_time, estimated_duration) VALUES
-            ($1, $2, 'pending', '2026-02-20', '09:00:00', 90),
-            ($1, $3, 'pending', '2026-02-21', '10:00:00', 120),
-            ($4, $5, 'in-progress', '2026-02-15', '14:00:00', 60),
-            ($4, $6, 'completed', '2026-02-10', '08:00:00', 90),
-            ($1, $2, 'completed', '2026-02-08', '11:00:00', 90)
-            RETURNING id, status, scheduled_date`,
+      `INSERT INTO jobs (employee_id, customer_id, status, scheduled_date, scheduled_time, notes, estimated_duration) VALUES
+            ($1, $2, 'pending', '2026-02-20', '09:00:00', '2 Person furniture removal', 90),
+            ($1, $3, 'pending', '2026-02-21', '10:00:00', 'She wants to see how the surface cleaner works first on a small spot.', 120),
+            ($4, $5, 'in-progress', '2026-02-15', '14:00:00', 'Gate code is #91032', 60),
+            ($4, $6, 'completed', '2026-02-10', '08:00:00', 'He will not be home, go through side gate.', 90),
+            ($1, $2, 'completed', '2026-02-08', '11:00:00', 'Call Branson when you get to the job.', 90)
+            RETURNING id, status, scheduled_date, scheduled_time, notes`,
       [johnId, customer1Id, customer2Id, sarahId, customer3Id, customer4Id],
     );
 

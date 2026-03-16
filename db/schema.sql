@@ -29,7 +29,6 @@ CREATE TABLE jobs (
     id          serial PRIMARY KEY,
     employee_id integer NOT NULL,
     customer_id integer NOT NULL,
-    job_name        VARCHAR(50) NOT NULL,
     status      VARCHAR(50) NOT NULL,
     scheduled_date DATE NOT NULL,
     scheduled_time TIME NOT NULL,
@@ -40,8 +39,7 @@ CREATE TABLE jobs (
     completed_at TIMESTAMP,
 
     FOREIGN KEY (employee_id) REFERENCES users(id),
-    FOREIGN KEY (customer_id) REFERENCES customers(id),
-    FOREIGN KEY (job_name) REFERENCES customers(name)
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
 );
 
 SELECT scheduled_time FROM jobs;
