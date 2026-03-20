@@ -3,7 +3,7 @@
 A RESTful API for the Doxa Cleaning job management app. Built with Node.js, Express, and PostgreSQL. Built as a full-stack capstone project by Emiliano Canseco III.
 
 ## Live Demo
-[Coming soon after deployment]
+[Doxa Cleaning](https://doxa-frontend-ten.vercel.app)
 
 ## GitHub
 - Backend: https://github.com/Emiliano-Canseco-III/Doxa-Cleaning-Backend
